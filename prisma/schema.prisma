@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js" // CAMBIAR A -js PARA QUE GENERE EL CLIENTE EN JS Y NO TS Y EVITAR ERRORES DE COMPILACION
+  // output   = "../generated/prisma" ELIMINAR ESTA LINEA PARA QUE GENERE EN LA CARPETA POR DEFECTO Y EVITAR ERRORES CON TS, y se crearan en node_modules/.prisma
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categoria {
+    id Int @id @default(autoincrement())
+    nombre String
+    slug String @unique
+    receta receta[]
+    // Relacion uno a muchos, una categoria puede tener muchas recetas
+}
+
+model receta {
+    id Int @id @default(autoincrement())
+    nombre String
+    slug String @unique
+    tiempo String
+    descripcion String @db.LongText
+    fecha DateTime @default(now())
+    foto String // nombre de la foto en el servidor
+    categoria categoria @relation(fields: [categoria_id], references: [id])
+    categoria_id Int
+    // Para la relacion se coloca un campo con el nombre de la tabla relacionada, luego el tipo de dato, que sera el nombre de la tabla, luego @relation y dentro de parentesis se colocan los campos que hacen la relacion, poniendo en fields en campo que sera la llave foranea y en references el campo al que hace referencia de la otra tabla
+    usuario usuario @relation(fields: [usuario_id], references: [id])
+    usuario_id Int @default(1) // Por defecto el usuario sera 1, que es el admin, para evitar errores al crear recetas sin usuario de registros previos
+}
+
+model contacto {
+    id Int @id @default(autoincrement())
+    nombre String
+    correo String
+    telefono String
+    mensaje String @db.LongText
+    fecha DateTime @default(now())
+}
+
+model estado {
+    id Int @id @default(autoincrement())
+    nombre String
+    usuario usuario[] // Relacion uno a muchos, un estado puede tener muchos usuarios
+}
+
+model usuario {
+    id Int @id @default(autoincrement())
+    nombre String
+    correo String @unique
+    password String
+    token String
+    estado estado @relation(fields: [estado_id], references: [id])
+    estado_id Int @default(2)
+    receta receta[]
+}

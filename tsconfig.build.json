@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src", "generated"], // AÑADIR LA CARPETA GENERATED PARA QUE NO DE ERRORES AL COMPILAR, RECOMENDACIÓN DE LA DOCUMENTACION OFICIAL DE PRISMA
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}
